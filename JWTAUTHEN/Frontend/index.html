@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple FrontEnd For Autentication</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      async function signup() {
+        const username = document.getElementById("signup-username").value;
+        const password = document.getElementById("signup-password").value;
+        await axios.post("http://localhost:3000/signup", {
+          username: username,
+          password: password,
+        });
+        alert("you are signed up");
+      }
+      async function signin() {
+        const username = document.getElementById("signin-username").value;
+        const password = document.getElementById("signin-password").value;
+        const response = await axios.post("http://localhost:3000/signin", {
+          username: username,
+          password: password,
+        });
+        console.log("Response Data:", response.data.token);
+        localStorage.setItem("token", response.data.token);
+        alert("you are signed in");
+      }
+      async function getUserInformation() {
+        const response = await axios.get("http://localhost:3000/me", {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        });
+        document.getElementById("information").innerHTML =
+          "username: " +
+          response.data.username +
+          " password: " +
+          response.data.password;
+      }
+      
+      function Logout() {
+        localStorage.removeItem("token");
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <span>Signup</span>
+      <input type="text" id="signup-username" placeholder="username" />
+      <input type="password" id="signup-password" placeholder="password" />
+      <button onclick="signup()">submit</button>
+    </div>
+    <div>
+      <span>Signin</span>
+      <input type="text" id="signin-username" placeholder="username" />
+      <input type="password" id="signin-password" placeholder="password" />
+      <button onclick="signin()">submit</button>
+    </div>
+    <div>
+        <button onclick="getUserInformation()">check info</button>
+      User Information:
+      <div id="information"></div>
+    </div>
+    <div>
+      <button onclick="Logout()">Logout</button>
+    </div>
+  </body>
+</html>
